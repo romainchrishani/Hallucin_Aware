@@ -14,13 +14,11 @@ nlp = spacy.load("en_core_web_sm")
 sentences = [sent for sent in nlp(reference_text).sents] 
 reference_sentences  = [sent.text.strip() for sent in sentences if len(sent) > 1]
 
-deberta_model = HallucinaAwareDeBERTa()
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-deberta_model = HallucinaAwareDeBERTa(device=device) 
+deberta_model = HallucinaAwareDeBERTa(model_name="potsawee/deberta-v3-large-mnli", device=device) 
 
 deberta_sent_scores = deberta_model.calculate(
     sentences = reference_sentences,                         
-    candidates = [candidate1, candidate2, candidate3], 
+    candidates = [candidate1], 
 )
 print(deberta_sent_scores)

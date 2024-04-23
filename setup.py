@@ -10,7 +10,8 @@ REQUIREMENTS = [
     "faiss_cpu==1.8.0",
     "nltk",
     "torch>=1.12",
-    "sentencepiece"
+    "sentencepiece",
+    "tqdm"
 ]
 
 VERSION = {}

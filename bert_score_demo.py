@@ -20,14 +20,13 @@ reference_sentences  = [sent.text.strip() for sent in sentences if len(sent) > 1
 
 candidate_scores = hallicinaware_bertscore.calculate_similarity(
     sentences = reference_sentences, 
-    candidates = [candidate3]
+    candidates = [candidate1] # input generated answers
     )
 
 
 print("\nBERTScore")
 for s1 in candidate_scores:
     print("{:.4f}".format(s1))
-    
 
 threshold = 0.001
 
