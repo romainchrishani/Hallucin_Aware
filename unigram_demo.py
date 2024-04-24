@@ -1,37 +1,36 @@
-from hallucinaware import utils
+import pandas as pd
 from hallucinaware.ngram import UnigramModel
+from hallucinaware.utils import read_pdf  
 
-pdf_text = utils.read_pdf('./content/srilanka.pdf')
+excel_path = 'resources/Answers for University PDF2.xlsx' 
+df = pd.read_excel(excel_path)
+
+responses = df.iloc[:, 0].tolist()
 
 ngram_model = UnigramModel()
 
-training_paragraph = pdf_text
+pdf_text = read_pdf('resources/University2.pdf')  
+ngram_model.add(pdf_text)
 
-ngram_model.add(training_paragraph)
+results = []
 
+for response in responses:
+    ngram_model.add(response)
+    ngram_model.train(k=0)  
+    evaluation_result = ngram_model.evaluate([response])
 
-main_response = "Sri Lanka is divided into 9 provinces, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the Central, Southern, and Eastern Provinces mentioned earlier, the island nation comprises the Western, Northern, North Central, Uva, Sabaragamuwa, and North Western Provinces."
-hallucinated_response = "India is divided into 28 states and 8 union territories, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the states of Uttar Pradesh, Maharashtra, and Tamil Nadu, which are known for their rich heritage and vibrant traditions, the country comprises the states of Rajasthan, Punjab, Himachal Pradesh, Uttarakhand, and Jammu and Kashmir in the north, renowned for their majestic mountains, desert landscapes, and historic forts. The eastern states of West Bengal, Odisha, Jharkhand, Bihar, and Assam boast diverse cultural influences, while the southern states of Andhra Pradesh, Telangana, Karnataka, and Kerala are famous for their temple towns, backwaters, and coastal charm. The central states of Madhya Pradesh, Chhattisgarh, and Gujarat showcase a unique amalgamation of architectural marvels and tribal cultures, while the western states of Goa and the union territories of Daman and Diu, and Dadra and Nagar Haveli offer a blend of Portuguese heritage and scenic beaches."
-hallucinated_response2 = "Sri Lanka is divided into 3 provinces, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the Eastern Province mentioned earlier, the island nation comprises the Western, and North Western Provinces."
+    result_entry = {
+        "Response": response,
+        "Sentence Level Avg": evaluation_result['sentence_level']['negative_log_prob_avg'],
+        "Sentence Level Max": evaluation_result['sentence_level']['negative_log_prob_max'],
+        "Document Level Avg": evaluation_result['document_level']['negative_log_prob_avg'],
+        "Document Level Max": evaluation_result['document_level']['negative_log_prob_max']
+    }
+    results.append(result_entry)
 
+results_df = pd.DataFrame(results)
 
-ngram_model.add(main_response)
-# ngram_model.add(hallucinated_response)
-# ngram_model.add(hallucinated_response2)
-
-
-ngram_model.train(k=0)
-
-evaluation_result = ngram_model.evaluate([main_response])
-print(evaluation_result)
-
-
-# hallucinated_response_evaluation = ngram_model.evaluate([hallucinated_response])
-# print(hallucinated_response_evaluation)
-
-
-# hallucinated_response_evaluation2 = ngram_model.evaluate([hallucinated_response2])
-# print(hallucinated_response_evaluation2)
+results_df.to_excel('evaluation_results.xlsx', index=False)
 
 # Average Negative Log Probability: Lower values indicate that the response is more likely according to the model.
 # Maximum Negative Log Probability: A higher value indicates that at least one token in the response is less likely according to the model.
