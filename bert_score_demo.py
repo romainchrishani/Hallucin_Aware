@@ -20,7 +20,7 @@ reference_sentences  = [sent.text.strip() for sent in sentences if len(sent) > 1
 
 candidate_scores = hallicinaware_bertscore.calculate_similarity(
     sentences = reference_sentences, 
-    candidates = [candidate1] # input generated answers
+    candidates = [candidate3] # input generated answers
     )
 
 

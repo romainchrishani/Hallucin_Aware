@@ -1,8 +1,9 @@
 import pandas as pd
 from hallucinaware.ngram import UnigramModel
 from hallucinaware.utils import read_pdf  
+import copy 
 
-excel_path = 'resources/Answers for University PDF2.xlsx' 
+excel_path = 'resources/1.xlsx' 
 df = pd.read_excel(excel_path)
 
 responses = df.iloc[:, 0].tolist()
@@ -15,9 +16,10 @@ ngram_model.add(pdf_text)
 results = []
 
 for response in responses:
-    ngram_model.add(response)
-    ngram_model.train(k=0)  
-    evaluation_result = ngram_model.evaluate([response])
+    ngram_model_copy=copy.deepcopy(ngram_model)
+    ngram_model_copy.add(response)
+    ngram_model_copy.train(k=0)  
+    evaluation_result = ngram_model_copy.evaluate([response])
 
     result_entry = {
         "Response": response,
