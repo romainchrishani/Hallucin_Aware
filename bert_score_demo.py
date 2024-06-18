@@ -6,13 +6,11 @@ from hallucinaware import utils
 print("hallucin-aware version: ", version.__version__)
 
 hallicinaware_bertscore = HallucinAwareBERTScore()
-
-pdf_text = utils.read_pdf('./content/srilanka.pdf')
+pdf_text = utils.read_pdf('resources/University2.pdf')
+#pdf_text="I want to buy an iphone 13"
 reference_text = pdf_text
 
-candidate1 = "Sri Lanka is divided into 9 provinces, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the Central, Southern, and Eastern Provinces mentioned earlier, the island nation comprises the Western, Northern, North Central, Uva, Sabaragamuwa, and North Western Provinces."
-candidate2 = "India is divided into 28 states and 8 union territories, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the states of Uttar Pradesh, Maharashtra, and Tamil Nadu, which are known for their rich heritage and vibrant traditions, the country comprises the states of Rajasthan, Punjab, Himachal Pradesh, Uttarakhand, and Jammu and Kashmir in the north, renowned for their majestic mountains, desert landscapes, and historic forts. The eastern states of West Bengal, Odisha, Jharkhand, Bihar, and Assam boast diverse cultural influences, while the southern states of Andhra Pradesh, Telangana, Karnataka, and Kerala are famous for their temple towns, backwaters, and coastal charm. The central states of Madhya Pradesh, Chhattisgarh, and Gujarat showcase a unique amalgamation of architectural marvels and tribal cultures, while the western states of Goa and the union territories of Daman and Diu, and Dadra and Nagar Haveli offer a blend of Portuguese heritage and scenic beaches."
-candidate3 = "Sri Lanka is divided into 3 provinces, each offering a distinct blend of attractions, culture, and natural beauty. In addition to the Eastern Province mentioned earlier, the island nation comprises the Western, and North Western Provinces."
+candidate1="The Postgraduate Studies Division contributes to the Faculty of Information Technology by handling matters pertaining to taught postgraduate programmes and research degrees. This includes monitoring student progress, administering student feedback, and ensuring that students receive a high-quality education in their chosen fields of study. Additionally, the Postgraduate Studies Division collaborates with industry partners to develop new postgraduate programmes and research opportunities, which helps to keep the Faculty at the forefront of technological innovation and development. Overall, the Postgraduate Studies Division plays a crucial role in advancing knowledge and skills within the IT industry and preparing students for successful careers in this rapidly growing field."
 
 nlp = spacy.load("en_core_web_sm")
 sentences = [sent for sent in nlp(reference_text).sents] 
@@ -20,21 +18,24 @@ reference_sentences  = [sent.text.strip() for sent in sentences if len(sent) > 1
 
 candidate_scores = hallicinaware_bertscore.calculate_similarity(
     sentences = reference_sentences, 
-    candidates = [candidate3] # input generated answers
+    candidates = [candidate1] # input generated answers
     )
 
 
 print("\nBERTScore")
-for s1 in candidate_scores:
-    print("{:.4f}".format(s1))
+#for s1 in candidate_scores:
+#   print("{:.4f}".format(s1))
+
 
 threshold = 0.001
 
 # Check for hallucination
 for score in candidate_scores:
     if score < threshold:
+        print("Candidate BERTScore: ",score)
         print("\nResponse seems coherent.")
         break 
 else:
+    print("Candidate BERTScore: ",score)
     print("\nPotential hallucination detected!")
 

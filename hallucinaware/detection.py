@@ -67,6 +67,7 @@ class HallucinAwareBERTScore:
 
         return one_minus_bertscore_mean
 
+
 class HallucinAwareNgram:
     def __init__(self, n: int):
         self.n = n #n=1 is Unigram, n=2 is Bigram, etc.

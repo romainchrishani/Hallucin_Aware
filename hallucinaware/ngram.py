@@ -1,7 +1,9 @@
 import spacy
 import numpy as np
 from nltk.util import ngrams
-
+from collections import defaultdict
+import math
+from collections import Counter
 
 class UnigramModel:
     """
@@ -86,10 +88,9 @@ class UnigramModel:
         # print("\n")
             
         return {
-            'sentence_level': {'negative_log_prob_avg': doc_negative_log_prob_avg, 'negative_log_prob_max': doc_negative_log_prob_max},
+            'sentence_level': {'negative_log_prob_avg': negative_log_prob_avg, 'negative_log_prob_max': negative_log_prob_max},
             'document_level': {'negative_log_prob_avg': doc_negative_log_prob_avg, 'negative_log_prob_max': doc_negative_log_prob_max},
         }
-
 
 class NgramModel:
     def __init__(
@@ -148,3 +149,5 @@ class NgramModel:
             'sentence_level': {'negative_log_prob_avg': negative_log_prob_avg, 'negative_log_prob_max': negative_log_prob_max},
             'document_level': {'negative_log_prob_avg': doc_negative_log_prob_avg, 'negative_log_prob_max': doc_negative_log_prob_max},
         }
+
+
