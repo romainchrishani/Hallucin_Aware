@@ -50,6 +50,7 @@ print("hallucin-aware version: ", version.__version__)
 
 hallicinaware_bertscore = HallucinAwareBERTScore()
 pdf_text = utils.read_pdf('resources/2023.pdf')
+
 reference_text = pdf_text
 
 # Example candidate sentence
