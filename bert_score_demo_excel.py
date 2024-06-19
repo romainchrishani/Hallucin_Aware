@@ -1,4 +1,4 @@
-from hallucinaware.detection import HallucinAwareBERTScore
+'''from hallucinaware.detection import HallucinAwareBERTScore
 from hallucinaware import version
 import spacy
 from hallucinaware import utils
@@ -44,4 +44,4 @@ results_df = pd.DataFrame(results)
 # Save the results to a new Excel sheet
 results_df.to_excel(output_file, index=False)
 
-print(f"Results saved to {output_file}")
+print(f"Results saved to {output_file}")'''

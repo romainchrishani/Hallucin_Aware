@@ -1,4 +1,4 @@
-from hallucinaware.detection import HallucinAwareBERTScore
+'''from hallucinaware.detection import HallucinAwareBERTScore
 from hallucinaware import version
 import spacy
 from hallucinaware import utils
@@ -6,12 +6,11 @@ from hallucinaware import utils
 print("hallucin-aware version: ", version.__version__)
 
 hallicinaware_bertscore = HallucinAwareBERTScore()
-pdf_text = utils.read_pdf('resources/University2.pdf')
+pdf_text = utils.read_pdf('resources/2023.pdf')
 #pdf_text="I want to buy an iphone 13"
 reference_text = pdf_text
 
-candidate1="The Postgraduate Studies Division contributes to the Faculty of Information Technology by handling matters pertaining to taught postgraduate programmes and research degrees. This includes monitoring student progress, administering student feedback, and ensuring that students receive a high-quality education in their chosen fields of study. Additionally, the Postgraduate Studies Division collaborates with industry partners to develop new postgraduate programmes and research opportunities, which helps to keep the Faculty at the forefront of technological innovation and development. Overall, the Postgraduate Studies Division plays a crucial role in advancing knowledge and skills within the IT industry and preparing students for successful careers in this rapidly growing field."
-
+candidate1="The question is not clear, maybe you can ask for specific details about the type of examination."
 nlp = spacy.load("en_core_web_sm")
 sentences = [sent for sent in nlp(reference_text).sents] 
 reference_sentences  = [sent.text.strip() for sent in sentences if len(sent) > 1]
@@ -38,4 +37,39 @@ for score in candidate_scores:
 else:
     print("Candidate BERTScore: ",score)
     print("\nPotential hallucination detected!")
+'''
 
+from hallucinaware.detection import HallucinAwareBERTScore
+from hallucinaware import version
+import spacy
+from hallucinaware import utils
+import numpy as np
+import bert_score
+
+print("hallucin-aware version: ", version.__version__)
+
+hallicinaware_bertscore = HallucinAwareBERTScore()
+pdf_text = utils.read_pdf('resources/2023.pdf')
+reference_text = pdf_text
+
+# Example candidate sentence
+candidate_sentence = "React Native is one of the most popular mobile application frameworks developed by Facebook and is based on JavaScript."
+
+# Load spaCy model for sentence tokenization
+nlp = spacy.load("en_core_web_sm")
+sentences = [sent for sent in nlp(reference_text).sents] 
+reference_sentences = [sent.text.strip() for sent in sentences if len(sent) > 1]
+
+# Calculate BERTScore similarity
+candidate_scores = hallicinaware_bertscore.calculate_similarity(
+    sentences=reference_sentences, 
+    candidates=[candidate_sentence]
+)
+
+# Find the sentence with the highest BERTScore
+max_index = np.argmax(candidate_scores)
+most_similar_sentence = reference_sentences[max_index]
+highest_f1_score = candidate_scores[max_index]
+
+print(f"Most similar sentence: {most_similar_sentence}")
+print(f"Highest BERTScore F1: {1.0 - highest_f1_score}")  # since scores were returned as 1 - BERTScore

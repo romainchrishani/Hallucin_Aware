@@ -31,8 +31,7 @@ for candidate in candidates:
         sentences=reference_sentences,
         candidates=[candidate]
     )
-
-    # Check for hallucination based on threshold
+# Check for hallucination based on threshold
     threshold = 0.001
     for score in candidate_scores:
         if score < threshold:
@@ -40,6 +39,7 @@ for candidate in candidates:
             break
     else:
         results.append((candidate, score, "Potential hallucination detected!"))
+
 
 # Create a DataFrame to save results
 results_df = pd.DataFrame(results, columns=['Candidate', 'BERTScore', 'Evaluation'])

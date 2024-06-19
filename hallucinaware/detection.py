@@ -8,8 +8,7 @@ import torch
 from torch.nn import CrossEntropyLoss
 from tqdm import auto as tqdm_lib
 
-
-class HallucinAwareBERTScore:
+'''class HallucinAwareBERTScore:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
         print("initializing HallucinAwareBERTScore...")
@@ -67,6 +66,40 @@ class HallucinAwareBERTScore:
 
         return one_minus_bertscore_mean
 
+        '''
+class HallucinAwareBERTScore:
+    def __init__(self):
+        self.nlp = spacy.load("en_core_web_sm")
+        print("initializing ModifiedHallucinAwareBERTScore...")
+
+    def calculate_similarity(self, sentences: list, candidates: list):
+        num_sentences = len(sentences)
+        num_candidates = len(candidates)
+        bertscore_array = np.zeros((num_sentences, num_candidates))
+
+        for c in range(num_candidates):
+            candidate = candidates[c]
+            candidate_sentences = [sent.text.strip() for sent in self.nlp(candidate).sents if len(sent) > 0]
+            num_sentences_candidate = len(candidate_sentences)
+
+            reference_expanded = sentences * num_sentences_candidate
+            sample_expanded = candidate_sentences * num_sentences
+
+            P, R, F1 = bert_score.score(
+                sample_expanded, reference_expanded,
+                lang="en", verbose=False,
+                rescale_with_baseline=True,
+            )
+
+            F1_score_matrix = F1.reshape(num_sentences, num_sentences_candidate)
+            F1_arr_max_axis1 = F1_score_matrix.max(axis=1).values
+            F1_arr_max_axis1 = F1_arr_max_axis1.numpy()
+
+            bertscore_array[:, c] = F1_arr_max_axis1
+
+        bertscore_mean = bertscore_array.mean(axis=-1)
+        return bertscore_mean
+    
 
 class HallucinAwareNgram:
     def __init__(self, n: int):
