@@ -49,12 +49,12 @@ import bert_score
 print("hallucin-aware version: ", version.__version__)
 
 hallicinaware_bertscore = HallucinAwareBERTScore()
-pdf_text = utils.read_pdf('resources/2023.pdf')
+pdf_text = utils.read_pdf('resources/University2.pdf')
 
 reference_text = pdf_text
 
 # Example candidate sentence
-candidate_sentence = "React Native is one of the most popular mobile application frameworks developed by Facebook and is based on JavaScript."
+candidate_sentence = "The Faculty of Information Technology was established in June 2001, so it is currently around 19 years old (as of October 2020)."
 
 # Load spaCy model for sentence tokenization
 nlp = spacy.load("en_core_web_sm")
