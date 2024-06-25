@@ -14,8 +14,9 @@ def compute_cosine_similarity(text1, text2):
     return similarity[0][0]
 
 # Example usage
-text1 = "If a student miss an examination whom should he/she inform?"
-text2 = "My name is Chrisani"
+text1 = "When should a student register for a course module?"
+text2 = "A student should register for relevant course modules at the beginning of each semester."
+
 
 similarity = compute_cosine_similarity(text1, text2)
 print(f"Cosine Similarity: {similarity}")

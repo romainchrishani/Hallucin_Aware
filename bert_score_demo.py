@@ -1,3 +1,4 @@
+#first one
 '''from hallucinaware.detection import HallucinAwareBERTScore
 from hallucinaware import version
 import spacy
@@ -39,6 +40,7 @@ else:
     print("\nPotential hallucination detected!")
 '''
 
+#working one one by one
 from hallucinaware.detection import HallucinAwareBERTScore
 from hallucinaware import version
 import spacy
@@ -49,12 +51,13 @@ import bert_score
 print("hallucin-aware version: ", version.__version__)
 
 hallicinaware_bertscore = HallucinAwareBERTScore()
-pdf_text = utils.read_pdf('resources/University2.pdf')
+pdf_text = utils.read_pdf('resources/1.pdf')
+#pdf_text="The telephone number of the librarian at the library is 0112 -650161, ext.1501."
 
 reference_text = pdf_text
 
 # Example candidate sentence
-candidate_sentence = "The Faculty of Information Technology was established in June 2001, so it is currently around 19 years old (as of October 2020)."
+candidate_sentence = "The detection recall of Vicuna-13B on aLM.detect is far lowerthan other considered LMs"
 
 # Load spaCy model for sentence tokenization
 nlp = spacy.load("en_core_web_sm")

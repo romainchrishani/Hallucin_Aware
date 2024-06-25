@@ -99,7 +99,8 @@ class HallucinAwareBERTScore:
 
         bertscore_mean = bertscore_array.mean(axis=-1)
         return bertscore_mean
-    
+
+
 
 class HallucinAwareNgram:
     def __init__(self, n: int):

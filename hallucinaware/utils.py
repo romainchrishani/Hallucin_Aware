@@ -38,8 +38,12 @@ def clean_text(text):
     text = re.sub(r'http\S+', '', text)  # Remove URLs
     # text = re.sub(r'[^A-Za-z0-9\s]+', '', text)  # Remove special characters
 
+    text = re.sub(r'\.{2,}', '', text)
+
     # Normalize whitespace
     text = re.sub('\s+', ' ', text).strip()
+    
+    print("Text",text)
     return text
 
 
