@@ -7,10 +7,14 @@ from hallucinaware.ngram import UnigramModel, NgramModel
 import torch
 from torch.nn import CrossEntropyLoss
 from tqdm import auto as tqdm_lib
+from sklearn.metrics.pairwise import cosine_similarity
+from transformers import RobertaTokenizer, RobertaModel
+from transformers import pipeline
 
-'''class HallucinAwareBERTScore:
+class HallucinAwareBERTScoreV1:
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_sm")
+        #self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_trf")
         print("initializing HallucinAwareBERTScore...")
 
     def calculate_similarity(
@@ -27,49 +31,104 @@ from tqdm import auto as tqdm_lib
             candidate = candidates[c]
             candidate_sentences  = [sent.text.strip() for sent in self.nlp(candidate).sents if len(sent) > 0]
             num_sentences_candidate = len(candidate_sentences)
-            
-            # print("\ncandidate_sentences: \n" + '\n'.join(candidate_sentences))
 
             reference_expanded  = expand_list(sentences, num_sentences_candidate)
             sample_expanded = duplicate_sentences(candidate_sentences, num_sentences)
-
-            # print("\nreference_expanded:", reference_expanded)
-            # print("\nsample_expanded :", sample_expanded)
 
             P, R, F1 = bert_score.score(
                             sample_expanded, reference_expanded,
                             lang="en", verbose=False,
                             rescale_with_baseline=True,
                         )
-        
-            # print("\nF1 score:", F1)
 
             F1_score_matrix = F1.reshape(num_sentences, num_sentences_candidate)
-        
-            # print("\nF1_score_matrix:\n", F1_score_matrix)
-        
+                
             F1_arr_max_axis1 = F1_score_matrix.max(axis=1).values
             F1_arr_max_axis1 = F1_arr_max_axis1.numpy()
             
-            # print("\nF1_arr_max_axis1:", F1_arr_max_axis1)
-
             bertscore_array[:,c] = F1_arr_max_axis1
-            # print("\nbertscore_array:\n", bertscore_array)
-            # print("===========================")
         
-
         bertscore_mean = bertscore_array.mean(axis=-1)
-        # print("\nmean bertscore per sentence:\n", bertscore_mean)
 
         one_minus_bertscore_mean = 1.0 - bertscore_mean
-        #print("\1 - mean bertscore per sentence:\n", one_minus_bertscore_mean)
 
         return one_minus_bertscore_mean
 
-        '''
+
+#my working one
 class HallucinAwareBERTScore:
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_sm")
+        #self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_trf")
+        print("initializing ModifiedHallucinAwareBERTScore...")
+
+    def calculate_similarity(self, sentences: list, candidates: list):
+        num_sentences = len(sentences)
+        num_candidates = len(candidates)
+        bertscore_array = np.zeros((num_sentences, num_candidates))
+
+        for c in range(num_candidates):
+            candidate = candidates[c]
+            candidate_sentences = [sent.text.strip() for sent in self.nlp(candidate).sents if len(sent) > 0]
+            num_sentences_candidate = len(candidate_sentences)
+
+            reference_expanded = sentences * num_sentences_candidate
+            sample_expanded = candidate_sentences * num_sentences
+
+            P, R, F1 = bert_score.score(
+                sample_expanded, reference_expanded,
+                lang="en", verbose=False,
+                rescale_with_baseline=True,
+            )
+
+            F1_score_matrix = F1.reshape(num_sentences, num_sentences_candidate)
+            F1_arr_max_axis1 = F1_score_matrix.max(axis=1).values
+            F1_arr_max_axis1 = F1_arr_max_axis1.numpy()
+
+            bertscore_array[:, c] = F1_arr_max_axis1
+
+        bertscore_mean = bertscore_array.mean(axis=-1)
+        return bertscore_mean
+    
+# Class definition for HallucinAwareBERTScore
+# Class definition for HallucinAwareBERTScore
+class HallucinAwareBERTScoreV3:
+    def __init__(self):
+        self.nlp = spacy.load("en_core_web_trf")
+        print("initializing ModifiedHallucinAwareBERTScore...")
+
+    def calculate_similarity(self, sentences: list, candidates: list):
+        num_sentences = len(sentences)
+        num_candidates = len(candidates)
+        bertscore_array = np.zeros((num_sentences, num_candidates))
+
+        for c in range(num_candidates):
+            candidate = candidates[c]
+            candidate_sentences = [sent.text.strip() for sent in self.nlp(candidate).sents if len(sent) > 0]
+            num_sentences_candidate = len(candidate_sentences)
+
+            reference_expanded = sentences * num_sentences_candidate
+            sample_expanded = candidate_sentences * num_sentences
+
+            P, R, F1 = bert_score.score(
+                sample_expanded, reference_expanded,
+                lang="en", verbose=False,
+                rescale_with_baseline=True,
+            )
+
+            F1_score_matrix = F1.reshape(num_sentences, num_sentences_candidate)
+            F1_arr_max_axis1 = F1_score_matrix.max(axis=1).values
+            F1_arr_max_axis1 = F1_arr_max_axis1.numpy()
+
+            bertscore_array[:, c] = F1_arr_max_axis1
+
+        bertscore_mean = bertscore_array.mean(axis=-1)
+        return bertscore_mean
+    
+class HallucinAwareBERTScoreV10:
+    def __init__(self):
+        #self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_trf")
         print("initializing ModifiedHallucinAwareBERTScore...")
 
     def calculate_similarity(self, sentences: list, candidates: list):
@@ -100,6 +159,66 @@ class HallucinAwareBERTScore:
         bertscore_mean = bertscore_array.mean(axis=-1)
         return bertscore_mean
 
+
+
+class ModifiedHallucinAwareBERTScore:
+    def __init__(self):
+        self.nlp = spacy.load("en_core_web_sm")
+        self.tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
+        self.model = RobertaModel.from_pretrained('roberta-large')
+        print("initializing ModifiedHallucinAwareBERTScore...")
+
+    def preprocess_text(self, text):
+        # Lowercase, strip, and remove punctuation (basic preprocessing)
+        doc = self.nlp(text.lower().strip())
+        return " ".join([token.text for token in doc if not token.is_punct])
+
+    def calculate_embeddings(self, texts):
+        inputs = self.tokenizer(texts, return_tensors='pt', padding=True, truncation=True, max_length=512)
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+        return embeddings
+
+    def calculate_similarity(self, sentences: list, candidates: list):
+        num_sentences = len(sentences)
+        num_candidates = len(candidates)
+        bertscore_array = np.zeros((num_sentences, num_candidates))
+        cosine_sim_array = np.zeros((num_sentences, num_candidates))
+
+        for c in range(num_candidates):
+            candidate = candidates[c]
+            candidate_sentences = [self.preprocess_text(sent.text.strip()) for sent in self.nlp(candidate).sents if len(sent) > 0]
+            num_sentences_candidate = len(candidate_sentences)
+
+            reference_expanded = sentences * num_sentences_candidate
+            sample_expanded = candidate_sentences * num_sentences
+
+            # Calculate BERTScore
+            P, R, F1 = bert_score.score(
+                sample_expanded, reference_expanded,
+                lang="en", verbose=False,
+                rescale_with_baseline=True,
+            )
+
+            F1_score_matrix = F1.reshape(num_sentences, num_sentences_candidate)
+            F1_arr_max_axis1 = F1_score_matrix.max(axis=1)[0].cpu().numpy()  # Extract the max values
+
+            bertscore_array[:, c] = F1_arr_max_axis1
+
+            # Calculate Cosine Similarity
+            ref_embeddings = self.calculate_embeddings(reference_expanded)
+            cand_embeddings = self.calculate_embeddings(sample_expanded)
+            cos_sim_matrix = cosine_similarity(ref_embeddings, cand_embeddings)
+            cos_sim_max_axis1 = cos_sim_matrix.max(axis=1)
+
+            cosine_sim_array[:, c] = cos_sim_max_axis1
+
+        # Combine BERTScore and Cosine Similarity
+        combined_scores = (bertscore_array + cosine_sim_array) / 2
+        combined_mean = combined_scores.mean(axis=-1)
+
+        return combined_mean
 
 
 class HallucinAwareNgram:

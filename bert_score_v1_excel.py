@@ -11,7 +11,7 @@ print("hallucin-aware version: ", version.__version__)
 hallucinaware_bertscore = HallucinAwareBERTScore()
 
 # Load the PDF text
-pdf_text = utils.read_pdf('resources/University2.pdf')
+pdf_text = utils.read_pdf('resources/2023-5.pdf')
 reference_text = pdf_text
 
 # Load SpaCy model and extract sentences from reference text
@@ -20,7 +20,7 @@ sentences = [sent for sent in nlp(reference_text).sents]
 reference_sentences = [sent.text.strip() for sent in sentences if len(sent) > 1]
 
 # Read candidates from Excel file
-candidates_df = pd.read_excel('resources/BertScore.xlsx')
+candidates_df = pd.read_excel('resources/Candidates.xlsx')
 candidates = candidates_df['Candidate'].tolist()  # Assuming the column name is 'Candidate'
 
 # Prepare a list to store results
@@ -46,6 +46,6 @@ for candidate in candidates:
 results_df = pd.DataFrame(results, columns=['Candidate', 'BERTScore', 'Evaluation'])
 
 # Save the results to a new Excel file
-results_df.to_excel('resources/results.xlsx', index=False)
+results_df.to_excel('resources/resultsv1.xlsx', index=False)
 
 print("Results have been saved to 'resources/results.xlsx'")

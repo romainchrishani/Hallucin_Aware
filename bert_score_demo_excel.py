@@ -12,7 +12,7 @@ print("hallucin-aware version: ", version.__version__)
 hallucinaware_bertscore = HallucinAwareBERTScore()
 
 # Read PDF text
-pdf_text = utils.read_pdf('resources/2023.pdf')
+pdf_text = utils.read_pdf('resources/2023-5.pdf')
 reference_text = pdf_text
 
 # Load spaCy model for sentence tokenization
@@ -21,7 +21,7 @@ sentences = [sent for sent in nlp(reference_text).sents]
 reference_sentences = [sent.text.strip() for sent in sentences if len(sent) > 1]
 
 # Read candidates from Excel file
-candidates_df = pd.read_excel('resources/Test2.xlsx')
+candidates_df = pd.read_excel('resources/Candidates.xlsx')
 candidates = candidates_df['Candidate'].tolist()  # Assuming the column name is 'Candidate'
 
 # Prepare a list to store results

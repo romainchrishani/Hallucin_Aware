@@ -42,6 +42,8 @@ def clean_text(text):
 
     # Normalize whitespace
     text = re.sub('\s+', ' ', text).strip()
+
+    #text = text.replace('.', '')
     
     print("Text",text)
     return text
