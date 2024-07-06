@@ -21,7 +21,7 @@ sentences = [sent for sent in nlp(reference_text).sents]
 reference_sentences = [sent.text.strip() for sent in sentences if len(sent) > 1]
 
 # Read candidates from Excel file
-candidates_df = pd.read_excel('resources/Candidates.xlsx')
+candidates_df = pd.read_excel('resources/Candidate1.xlsx')
 candidates = candidates_df['Candidate'].tolist()  # Assuming the column name is 'Candidate'
 
 # Prepare a list to store results

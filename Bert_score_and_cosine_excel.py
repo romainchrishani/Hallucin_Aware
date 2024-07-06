@@ -92,8 +92,8 @@ def process_candidate_sentences(pdf_path, excel_input_path, excel_output_path):
     results_df.to_excel(excel_output_path, index=False)
 
 # Example usage
-pdf_path = 'resources/2023-5.pdf'
-excel_input_path = 'resources/Candidates.xlsx'  # Excel file containing candidate sentences
+pdf_path = 'resources/2023-All.pdf'
+excel_input_path = 'resources/Candidate8.xlsx'  # Excel file containing candidate sentences
 excel_output_path = 'resources/similarity_results.xlsx'  # Output Excel file to save results
 
 if __name__ == "__main__":

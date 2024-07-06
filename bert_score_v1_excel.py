@@ -1,6 +1,6 @@
 #first one excel
 import pandas as pd
-from hallucinaware.detection import HallucinAwareBERTScore
+from hallucinaware.detection import HallucinAwareBERTScoreV1
 from hallucinaware import version
 import spacy
 from hallucinaware import utils
@@ -8,7 +8,7 @@ from hallucinaware import utils
 print("hallucin-aware version: ", version.__version__)
 
 # Initialize HallucinAwareBERTScore
-hallucinaware_bertscore = HallucinAwareBERTScore()
+hallucinaware_bertscore = HallucinAwareBERTScoreV1()
 
 # Load the PDF text
 pdf_text = utils.read_pdf('resources/2023-5.pdf')
@@ -20,7 +20,7 @@ sentences = [sent for sent in nlp(reference_text).sents]
 reference_sentences = [sent.text.strip() for sent in sentences if len(sent) > 1]
 
 # Read candidates from Excel file
-candidates_df = pd.read_excel('resources/Candidates.xlsx')
+candidates_df = pd.read_excel('resources/Candidate1.xlsx')
 candidates = candidates_df['Candidate'].tolist()  # Assuming the column name is 'Candidate'
 
 # Prepare a list to store results
